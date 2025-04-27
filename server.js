@@ -12,13 +12,30 @@ import followRoutes from "./routes/follow.route.js";
 import libraryRoutes from "./routes/library.route.js";
 import cors from 'cors';
 
+// Load environment variables
+dotenv.config();
+
 const app = express();
 
 // CORS configuration
 app.use(cors({
-	origin: 'http://localhost:5173', // Vite's default port
-	credentials: true
-}));
+	origin: function (origin, callback) {
+	  const allowedOrigins = ['http://localhost:5173', 'https://page-turner-theta.vercel.app'];
+	  console.log('Request origin:', origin);
+	  if (!origin || allowedOrigins.includes(origin)) {
+		callback(null, true);
+	  } else {
+		console.log('Blocked by CORS:', origin);
+		callback(new Error('Not allowed by CORS'));
+	  }
+	},
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization']
+  }));
+  
+// This is critical for cookies to work properly
+app.set('trust proxy', 1);
 
 app.use(cookieParser());
 
