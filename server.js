@@ -12,6 +12,7 @@ import followRoutes from "./routes/follow.route.js";
 import libraryRoutes from "./routes/library.route.js";
 import cors from 'cors';
 
+dotenv.config();
 const app = express();
 
 // CORS configuration
