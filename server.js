@@ -18,22 +18,20 @@ dotenv.config();
 const app = express();
 
 // CORS configuration
-app.use(cors({
-	origin: function (origin, callback) {
-	  const allowedOrigins = ['http://localhost:5173', 'https://page-turner-theta.vercel.app'];
-	  console.log('Request origin:', origin);
-	  if (!origin || allowedOrigins.includes(origin)) {
-		callback(null, true);
-	  } else {
-		console.log('Blocked by CORS:', origin);
-		callback(new Error('Not allowed by CORS'));
-	  }
-	},
-	credentials: true,
-	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-	allowedHeaders: ['Content-Type', 'Authorization']
-  }));
-  
+app.use(
+	cors({
+		origin: [
+			"http://localhost:5173",
+			"https://page-turner-theta.vercel.app",
+			"https://page-turner-git-main-akashs-projects-4f8b6545.vercel.app",
+			"https://page-turner-akashs-projects-4f8b6545.vercel.app"
+		],
+		credentials: true,
+		methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+		allowedHeaders: ["Content-Type", "Authorization"],
+	})
+);
+
 // This is critical for cookies to work properly
 app.set('trust proxy', 1);
 
