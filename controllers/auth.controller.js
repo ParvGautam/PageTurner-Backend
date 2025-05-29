@@ -206,3 +206,36 @@ export const updateProfile = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
+
+export const setupGuestUser = async (req, res) => {
+    try {
+        // Check if guest user already exists
+        const existingUser = await User.findOne({ email: 'guest@interview.com' });
+        
+        if (existingUser) {
+            return res.status(200).json({ message: 'Guest user already exists', user: existingUser.username });
+        }
+        
+        // Create salt and hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash('guestPassword123!', salt);
+        
+        // Create guest user
+        const guestUser = new User({
+            fullName: 'Guest Interviewer',
+            username: 'guest_interviewer',
+            email: 'guest@interview.com',
+            password: hashedPassword,
+            profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+        });
+        
+        // Save guest user
+        await guestUser.save();
+        
+        console.log('Guest user created successfully in production');
+        res.status(201).json({ message: 'Guest user created successfully', user: guestUser.username });
+    } catch (error) {
+        console.error('Error creating guest user:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+}
