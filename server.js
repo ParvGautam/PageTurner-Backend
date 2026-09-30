@@ -20,15 +20,23 @@ const app = express();
 // CORS configuration
 app.use(
 	cors({
-		origin: [
-			"http://localhost:5173",
-			"https://page-turner-theta.vercel.app",
-			"https://page-turner-git-main-akashs-projects-4f8b6545.vercel.app",
-			"https://page-turner-akashs-projects-4f8b6545.vercel.app"
-		],
+		origin: (origin, callback) => {
+			// Allow requests with no origin (like mobile apps, curl, Postman)
+			if (!origin) return callback(null, true);
+
+			// Allow all localhost origins and all Vercel deployment domains
+			if (
+				origin.startsWith("http://localhost:") ||
+				origin.endsWith(".vercel.app")
+			) {
+				return callback(null, true);
+			}
+
+			return callback(new Error(`Not allowed by CORS: ${origin}`));
+		},
 		credentials: true,
-		methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-		allowedHeaders: ["Content-Type", "Authorization"],
+		methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+		allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 	})
 );
 
