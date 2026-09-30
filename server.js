@@ -48,6 +48,20 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 7000;
 
+// Ensure database is connected before handling API requests (critical for Vercel serverless functions)
+app.use(async (req, res, next) => {
+	// Skip DB connection for root health check
+	if (req.path === "/") {
+		return next();
+	}
+	try {
+		await connectDB();
+		next();
+	} catch (error) {
+		res.status(500).json({ error: "Database connection failed", details: error.message });
+	}
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/novels", novelRoutes);
 app.use("/api/chapters", chapterRoutes);
@@ -57,7 +71,11 @@ app.use("/api/bookmarks", bookmarkRoutes);
 app.use("/api/user", followRoutes);
 app.use("/api/library", libraryRoutes);
 
-app.listen(PORT, '0.0.0.0', () => {
-	console.log(`Server is running on port ${PORT}`);
-	connectDB();
-});
+if (!process.env.VERCEL) {
+	app.listen(PORT, '0.0.0.0', () => {
+		console.log(`Server is running on port ${PORT}`);
+		connectDB();
+	});
+}
+
+export default app;
