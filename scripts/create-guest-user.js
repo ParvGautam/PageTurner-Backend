@@ -2,9 +2,13 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.model.js';
 import dotenv from 'dotenv';
+import dns from 'node:dns';
 
 // Load environment variables
 dotenv.config();
+
+// Use public DNS to resolve MongoDB SRV records
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)

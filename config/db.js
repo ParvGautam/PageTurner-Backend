@@ -1,4 +1,9 @@
 import mongoose from "mongoose";
+import dns from "node:dns";
+
+// Use public DNS (Google DNS) to resolve MongoDB SRV records
+// Prevents querySrv ECONNREFUSED errors caused by local ISP/router DNS
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const connectDB = async () => {
   try {
